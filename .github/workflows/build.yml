@@ -13,9 +13,6 @@ jobs:
   build:
     name: Build and push image
     runs-on: ubuntu-latest
-    env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -56,6 +53,7 @@ jobs:
         with:
           build-args: |
             RELEASE=${{ steps.ghd.outputs.describe }}
+          file: Dockerfile.cachedb
           context: ${{ inputs.UNBOUND_VERSION }}
           platforms: linux/amd64,linux/arm64/v8
           push: true
