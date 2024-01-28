@@ -1,0 +1,65 @@
+name: Docker Image CI
+
+on:
+  workflow_call:
+    inputs:
+      UNBOUND_VERSION:
+        description: 'Unbound version to build'
+        default: '1.19.0'
+        type: string
+        required: true
+
+jobs:
+  build:
+    name: Build and push image
+    runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get image metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          flavor: |
+            latest=true
+          images: |
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}},value=v${{ inputs.UNBOUND_VERSION }}
+            type=semver,pattern={{major}}.{{minor}},value=v${{ inputs.UNBOUND_VERSION }}
+            type=semver,pattern={{major}},value=v${{ inputs.UNBOUND_VERSION }}
+            type=sha,prefix=
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Git describe
+        id: ghd
+        uses: proudust/gh-describe@v1
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          build-args: |
+            RELEASE=${{ steps.ghd.outputs.describe }}
+          context: ${{ inputs.UNBOUND_VERSION }}
+          platforms: linux/amd64,linux/arm64/v8
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
