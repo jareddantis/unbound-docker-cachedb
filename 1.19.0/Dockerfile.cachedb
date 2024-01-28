@@ -122,6 +122,7 @@ RUN set -x && \
       ca-certificates \
       ldnsutils \
       libevent-2.1-7 \
+      libhiredis \
       libnghttp2-14 \
       libexpat1 \
       libprotobuf-c1 && \
