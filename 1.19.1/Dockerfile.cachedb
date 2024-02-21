@@ -1,8 +1,8 @@
 FROM debian:bookworm as openssl
 LABEL maintainer="Matthew Vance"
 
-ENV VERSION_OPENSSL=openssl-3.2.0 \
-    SHA256_OPENSSL=14c826f07c7e433706fb5c69fa9e25dab95684844b4c962a2cf1bf183eb4690e \
+ENV VERSION_OPENSSL=openssl-3.2.1 \
+    SHA256_OPENSSL=83c7329fe52c850677d75e5d0b0ca245309b97e8ecbcfdc1dfdc4ab9fac35b39 \
     SOURCE_OPENSSL=https://www.openssl.org/source/ \
     # OpenSSL OMC
     OPGP_OPENSSL_1=EFC0A467D613CB83C7ED6D30D894E2CE8B3D79F5 \
@@ -53,9 +53,9 @@ FROM debian:bookworm as unbound
 LABEL maintainer="Matthew Vance, Jared Dantis"
 
 ENV NAME=unbound \
-    UNBOUND_VERSION=1.19.0 \
-    UNBOUND_SHA256=a97532468854c61c2de48ca4170de854fd3bc95c8043bb0cfb0fe26605966624 \
-    UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-1.19.0.tar.gz
+    UNBOUND_VERSION=1.19.1 \
+    UNBOUND_SHA256=bc1d576f3dd846a0739adc41ffaa702404c6767d2b6082deb9f2f97cbb24a3a9 \
+    UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-1.19.1.tar.gz
 
 WORKDIR /tmp/src
 
@@ -77,7 +77,7 @@ RUN build_deps="curl gcc libc-dev libevent-dev libexpat1-dev libnghttp2-dev make
     echo "${UNBOUND_SHA256} *unbound.tar.gz" | sha256sum -c - && \
     tar xzf unbound.tar.gz && \
     rm -f unbound.tar.gz && \
-    cd unbound-1.19.0 && \
+    cd unbound-1.19.1 && \
     groupadd _unbound && \
     useradd -g _unbound -s /dev/null -d /etc _unbound && \
     ./configure \
