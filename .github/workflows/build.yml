@@ -5,7 +5,7 @@ on:
     inputs:
       UNBOUND_VERSION:
         description: 'Unbound version to build'
-        default: '1.20.0'
+        default: '1.22.0'
         type: string
         required: true
 
